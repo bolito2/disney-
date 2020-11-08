@@ -22,3 +22,12 @@ class RNNCell:
         y = np.tanh(a)
 
         return a, y
+
+
+class SoftMax:
+    def __call__(self, y):
+        # Exp and normalize the output to convey probabilities
+        y_softmax = np.exp(y)
+        y_softmax /= np.sum(y_softmax)
+
+        return y_softmax
