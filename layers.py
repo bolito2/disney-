@@ -1,8 +1,5 @@
 import numpy as np
-
-# Letters supported by the algorithm
-letters = ' 0123456789abcdefghijklmnopqrstuvwxyz>'
-n_letters = len(letters)
+from encoding import *
 
 
 class RNNCell:
@@ -17,20 +14,22 @@ class RNNCell:
 
     # Forward propagate one step
     def __call__(self, a_prev, x):
-        # Reshape x to a row vector in case it only has one dimension
-        x = np.reshape(x, [-1, 1])
-
-        a = np.dot(self.Wa, a_prev) + np.dot(self.Wx, x) + self.b
+        z = np.dot(self.Wa, a_prev) + np.dot(self.Wx, x) + self.b
         # Use hyperbolic tangent for activation
-        y = np.tanh(a)
+        a = np.tanh(z)
 
-        return a, y
+        return a
 
 
-class SoftMax:
-    def __call__(self, y):
-        # Exp and normalize the output to convey probabilities
-        y_softmax = np.exp(y)
-        y_softmax /= np.sum(y_softmax)
+def softmax(a):
+    # Exp and normalize the output to convey probabilities
+    y = np.exp(a)
+    y /= np.sum(y)
 
-        return y_softmax
+    return y
+
+
+class RNNChain:
+    def __init__(self):
+        self.rnn_cell = RNNCell()
+        self.A = None
