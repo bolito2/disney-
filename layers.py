@@ -27,8 +27,8 @@ class RNNCell:
         # m_ii = (1 + ai)(1 - ai) times da(row vector), which is equivalent but less efficient.
         dz = np.multiply(np.multiply(1 + a, 1 - a).T, da)   # (1 x n)
 
-        # dz/db = I so they are equal
-        db = dz   # (1 x n)
+        # dz/db = I so they are equal, but we transpose it to make a column vector(for gradient descent)
+        db = dz.T   # (n x 1)
 
         # dJ/dWi = dzi*x.T where dWi is the i-th row of Wx so we can compute them all at the same time this way
         dWx = np.dot(dz.T, x.T)   # (n x n)
@@ -50,28 +50,36 @@ def softmax(a):
     return p
 
 
-# Class for caching the various outputs of forward-propagation
-class Cache:
-    def __init__(self, shape):
-        self.X = np.zeros(shape)
-        self.A = np.zeros(shape)
-        self.P = np.zeros(shape)
-
-
 class RNNChain:
+    # Class for caching the various outputs of forward-propagation
+    class Cache:
+        def __init__(self, shape):
+            self.X = np.zeros(shape)
+            self.A = np.zeros(shape)
+            self.P = np.zeros(shape)
+
+    # Class for storing the various gradients of back-propagation
+    class Gradients:
+        def __init__(self):
+            self.db = np.zeros((n_letters, 1))
+            self.dWx = np.zeros((n_letters, n_letters))
+            self.dWa = np.zeros((n_letters, n_letters))
+
     def __init__(self):
         self.rnn_cell = RNNCell()
         self.cache = None
+        self.long = None
+        self.grads = None
 
     # Forward-propagate a given name and return predictions
     def __call__(self, X):
         # Prepare the cache
-        self.cache = Cache(X.shape)
+        self.cache = self.Cache(X.shape)
         # Cache the inputs for backpropagation
         self.cache.X = X
 
         # Set the longitude of the word minus the end token (longitude of the RNN)
-        long = X.shape[0] - 1
+        self.long = X.shape[0] - 1
 
         # Initialize the cost to zero
         cost = 0
@@ -79,24 +87,45 @@ class RNNChain:
         # Start the hidden values as zeros
         a = np.zeros((n_letters, 1))
 
-        for i in range(long):
+        for t in range(self.long):
             # Get the inputs in proper shape(n x 1)
-            x = np.reshape(X[i], [-1, 1])
+            x = np.reshape(X[t], [-1, 1])
 
             # Process one step of forward propagation to get the hidden values of the i-th layer(indexed from 1) from the last
             a = self.rnn_cell(x, a)
 
             # Transpose a before saving it into the cache, as it is a column vector. cache.A is indexed from one
-            self.cache.A[i + 1] = a.T
+            self.cache.A[t + 1] = a.T
 
             # Get the predictions by applying soft-max to this layer's hidden weights and cache them too
-            self.cache.P[i + 1] = softmax(a).T
+            self.cache.P[t + 1] = softmax(a).T
 
             # Compute cost of this time-step and add it to the total
             # The expected value is the next character from the input
-            cost += -np.sum(np.multiply(X[i + 1], np.log(self.cache.P[i + 1])))
+            cost += -np.sum(np.multiply(X[t + 1], np.log(self.cache.P[t + 1])))
 
-        return cost/long
+        return cost/self.long
 
+    # Apply backpropagation through time to get the gradients
+    def backpropagate(self):
+        if self.long is None:
+            print('Error: Apply forward propagation before back propagation')
+        else:
+            # Initialize the gradients
+            self.grads = self.Gradients()
 
+            # Iterate through layers 1 to long(included)
+            for t in range(1, self.long + 1):
+                # Compute dJ/da where J is the cost of the time-step t and a its hidden state(da has to be a row vector)
+                da = self.cache.P[t, None] - self.cache.X[t, None]
+
+                # Here is where we backpropagate through time, getting the gradient of dJ with respect to the previous
+                # layer hidden values and updating the weights gradients each step
+                for j in range(t, 0, -1):
+                    # Compute the gradients of each time-step keeping in mind that a and x must be column vectors
+                    da, dWx_j, dWa_j, db_j = self.rnn_cell.gradients(self.cache.X[j, None].T, self.cache.A[j, None].T, da)
+
+                    self.grads.dWx += dWx_j
+                    self.grads.dWa += dWa_j
+                    self.grads.db += db_j
 
