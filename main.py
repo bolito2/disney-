@@ -30,6 +30,12 @@ epochs = 50
 
 costs = []
 
+# Variables for plotting gradient norms
+plot = -1
+norms_Wx = []
+norms_Wa = []
+norms_b = []
+
 for e in range(epochs):
     cost = 0
     for name_oh in names_oh:
@@ -38,32 +44,48 @@ for e in range(epochs):
 
         # Backpropagate and update weights of the RNN
         rnn.backpropagate()
-        rnn.update_weights(0.002, 5)
+        norm_Wx, norm_Wa, norm_b = rnn.update_weights(0.01, 4, 20)
+
+        # If we are in the desired epoch, save gradient norms
+        if e == plot:
+            norms_Wx.append(norm_Wx)
+            norms_Wa.append(norm_Wa)
+            norms_b.append(norm_b)
 
     cost /= len(names_oh)
 
     print('Epoch {}: J = {}'.format(e, cost))
     costs.append(cost)
 
+# Plot the cost in each epoch
 plt.plot(costs)
+plt.show()
 
-letter = 'o'
-gen_strain = ''
+# Plot gradients' norms
+plt.plot(norms_Wx)
+plt.plot(norms_Wa)
+plt.plot(norms_b)
 
-rnn_cell = RNNCell()
 
-a = np.zeros((n_letters, 1))
-while letter != '>':
-    # Add last letter to the name of the strain
-    gen_strain += letter
+# Generate a name with the trained RNN
+def gen_name():
+    letter = input('Input first letter:')
+    gen_strain = ''
 
-    # Forward-propagate one step
-    a = rnn_cell(a, one_hot_character(letter))
+    rnn_cell = rnn.rnn_cell
 
-    # Get the probabilities of choosing each character
-    probabilities = np.reshape(softmax(a), [-1])
+    a = np.zeros((n_letters, 1))
+    while letter != '>':
+        # Add last letter to the name of the strain
+        gen_strain += letter
 
-    letter_index = np.random.choice(n_letters, p=probabilities)
-    letter = letters[letter_index]
+        # Forward-propagate one step
+        a = rnn_cell(a, one_hot_character(letter))
 
-print(gen_strain)
+        # Get the probabilities of choosing each character
+        probabilities = np.reshape(softmax(a), [-1])
+
+        letter_index = np.random.choice(n_letters, p=probabilities)
+        letter = letters[letter_index]
+
+    print(gen_strain)

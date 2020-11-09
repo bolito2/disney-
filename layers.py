@@ -121,7 +121,7 @@ class RNNChain:
 
                 # Here is where we backpropagate through time, getting the gradient of dJ with respect to the previous
                 # layer hidden values and updating the weights gradients each step
-                for j in range(t, t-1, -1):
+                for j in range(t, 0, -1):
                     # Compute the gradients of each time-step keeping in mind that a and x must be column vectors
                     da, dWx_j, dWa_j, db_j = self.rnn_cell.gradients(np.reshape(self.cache.X[j - 1], [-1, 1]), np.reshape(self.cache.A[j - 1], [-1, 1]), np.reshape(self.cache.A[j], [-1, 1]), da)
 
@@ -130,18 +130,23 @@ class RNNChain:
                     self.grads.db += db_j
 
     # Update the weights with the given gradients
-    def update_weights(self, learning_rate, clipnorm):
+    def update_weights(self, learning_rate, clipnorm, clipnorm_Wa=None):
+        if clipnorm_Wa is None:
+            clipnorm_Wa = clipnorm
+
         # Don't let the gradients' norm exceed clipnorm
         if np.linalg.norm(self.grads.dWx) > clipnorm:
-            self.grads.dWx *= clipnorm/np.linalg.norm(self.grads.dWx)
+            self.grads.dWx *= clipnorm / np.linalg.norm(self.grads.dWx)
 
-        if np.linalg.norm(self.grads.dWa) > clipnorm:
-            self.grads.dWa *= clipnorm/np.linalg.norm(self.grads.dWa)
+        if np.linalg.norm(self.grads.dWa) > clipnorm_Wa:
+            self.grads.dWa *= clipnorm_Wa / np.linalg.norm(self.grads.dWa)
 
         if np.linalg.norm(self.grads.db) > clipnorm:
             self.grads.db *= clipnorm/np.linalg.norm(self.grads.db)
 
         # Update the weights with the gradients
-        #self.rnn_cell.Wx -= learning_rate*self.grads.dWx
+        self.rnn_cell.Wx -= learning_rate*self.grads.dWx
         self.rnn_cell.Wa -= learning_rate*self.grads.dWa
-        #self.rnn_cell.b -= learning_rate*self.grads.db
+        self.rnn_cell.b -= learning_rate*self.grads.db
+
+        return np.linalg.norm(self.grads.dWx), np.linalg.norm(self.grads.dWa), np.linalg.norm(self.grads.db)
