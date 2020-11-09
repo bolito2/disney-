@@ -117,7 +117,7 @@ class RNNChain:
             # Iterate through layers 1 to long(included)
             for t in range(1, self.long + 1):
                 # Compute dJ/da where J is the cost of the time-step t and a its hidden state(da has to be a row vector)
-                da = np.reshape(self.cache.P[t] - self.cache.X[t], [-1, 1])
+                da = np.reshape(self.cache.P[t] - self.cache.X[t], [1, -1])
 
                 # Here is where we backpropagate through time, getting the gradient of dJ with respect to the previous
                 # layer hidden values and updating the weights gradients each step
