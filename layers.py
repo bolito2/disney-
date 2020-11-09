@@ -129,3 +129,8 @@ class RNNChain:
                     self.grads.dWa += dWa_j
                     self.grads.db += db_j
 
+    # Update the weights with the given gradients
+    def update_weights(self, learning_rate):
+        self.rnn_cell.Wx -= learning_rate*self.grads.dWx
+        self.rnn_cell.Wa -= learning_rate*self.grads.dWa
+        self.rnn_cell.b -= learning_rate*self.grads.db
