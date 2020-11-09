@@ -24,7 +24,6 @@ with open('cannabis.csv', newline='') as csvfile:
     names_oh = names_oh[1:]
 
 
-
 # Create the RNNChain
 rnn = RNNChain()
 epochs = 50

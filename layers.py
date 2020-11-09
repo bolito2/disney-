@@ -22,7 +22,7 @@ class RNNCell:
 
     # Compute the weight gradients from the dJ/da
     # x and a are column vectors, da is a row vector(gradient)
-    def gradients(self, x, a, da):
+    def gradients(self, x, a_prev, a, da):
         # dJ/dz, computed with element-wise multiplication. It would actually be a diagonal matrix with
         # m_ii = (1 + ai)(1 - ai) times da(row vector), which is equivalent but less efficient.
         dz = np.multiply(1 - np.square(a).T, da)   # (1 x n)
@@ -33,7 +33,7 @@ class RNNCell:
         # dJ/dWi = dzi*x.T where dWi is the i-th row of Wx so we can compute them all at the same time this way
         dWx = np.dot(dz.T, x.T)   # (n x n)
         # Same thing for the hidden state weights
-        dWa = np.dot(dz.T, a.T)   # (n x n)
+        dWa = np.dot(dz.T, a_prev.T)   # (n x n)
 
         # Compute the gradient with respect to last time-step hidden values, to use for backpropagation through time
         da_prev = np.dot(dz, self.Wa)   # (1 x n)
@@ -123,7 +123,7 @@ class RNNChain:
                 # layer hidden values and updating the weights gradients each step
                 for j in range(t, t-1, -1):
                     # Compute the gradients of each time-step keeping in mind that a and x must be column vectors
-                    da, dWx_j, dWa_j, db_j = self.rnn_cell.gradients(np.reshape(self.cache.X[j - 1], [-1, 1]), np.reshape(self.cache.A[j], [-1, 1]), da)
+                    da, dWx_j, dWa_j, db_j = self.rnn_cell.gradients(np.reshape(self.cache.X[j - 1], [-1, 1]), np.reshape(self.cache.A[j - 1], [-1, 1]), np.reshape(self.cache.A[j], [-1, 1]), da)
 
                     self.grads.dWx += dWx_j
                     self.grads.dWa += dWa_j
@@ -142,6 +142,6 @@ class RNNChain:
             self.grads.db *= clipnorm/np.linalg.norm(self.grads.db)
 
         # Update the weights with the gradients
-        self.rnn_cell.Wx -= learning_rate*self.grads.dWx
+        #self.rnn_cell.Wx -= learning_rate*self.grads.dWx
         self.rnn_cell.Wa -= learning_rate*self.grads.dWa
-        self.rnn_cell.b -= learning_rate*self.grads.db
+        #self.rnn_cell.b -= learning_rate*self.grads.db
