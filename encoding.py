@@ -15,6 +15,6 @@ def one_hot_character(character):
 def one_hot_string(string):
     string_oh = np.zeros((len(string), n_letters))
     for i in range(len(string)):
-        string_oh[i] = one_hot_character(string[i])
+        string_oh[i] = one_hot_character(string[i]).squeeze()
 
     return string_oh

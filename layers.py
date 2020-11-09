@@ -44,13 +44,59 @@ class RNNCell:
 
 def softmax(a):
     # Exp and normalize the output to convey probabilities
-    y = np.exp(a)
-    y /= np.sum(y)
+    p = np.exp(a)
+    p /= np.sum(p)
 
-    return y
+    return p
+
+
+# Class for caching the various outputs of forward-propagation
+class Cache:
+    def __init__(self, shape):
+        self.X = np.zeros(shape)
+        self.A = np.zeros(shape)
+        self.P = np.zeros(shape)
 
 
 class RNNChain:
     def __init__(self):
         self.rnn_cell = RNNCell()
-        self.A = None
+        self.cache = None
+
+    # Forward-propagate a given name and return predictions
+    def __call__(self, X):
+        # Prepare the cache
+        self.cache = Cache(X.shape)
+        # Cache the inputs for backpropagation
+        self.cache.X = X
+
+        # Set the longitude of the word minus the end token (longitude of the RNN)
+        long = X.shape[0] - 1
+
+        # Initialize the cost to zero
+        cost = 0
+
+        # Start the hidden values as zeros
+        a = np.zeros((n_letters, 1))
+
+        for i in range(long):
+            # Get the inputs in proper shape(n x 1)
+            x = np.reshape(X[i], [-1, 1])
+
+            # Process one step of forward propagation to get the hidden values of the i-th layer(indexed from 1) from the last
+            a = self.rnn_cell(x, a)
+
+            # Transpose a before saving it into the cache, as it is a column vector. cache.A is indexed from one
+            self.cache.A[i + 1] = a.T
+
+            # Get the predictions by applying soft-max to this layer's hidden weights and cache them too
+            self.cache.P[i + 1] = softmax(a).T
+
+            # Compute cost of this time-step and add it to the total
+            # The expected value is the next character from the input
+            cost += -np.sum(np.multiply(X[i + 1], np.log(self.cache.P[i + 1])))
+
+        return cost/long
+
+
+
