@@ -7,14 +7,23 @@ import matplotlib.pyplot as plt
 # Extract the strain names from the dataset
 with open('cannabis.csv', newline='') as csvfile:
     cannabis_data = csv.reader(csvfile)
-    cannabis_names = []
+    names_oh = []
 
     # The first column of the data contains the strain name
     for row in cannabis_data:
-        cannabis_names.append(row[0])
+        # Replace syphons with spaces
+        name = row[0].replace('-', ' ').lower()
+
+        # Add the end token to the name
+        name = name + '>'
+
+        # Convert to one-hot vector and append to the array
+        names_oh.append(one_hot_string(name))
 
     # First row is metadata so delete it
-    cannabis_names = cannabis_names[1:]
+    names_oh = names_oh[1:]
+
+
 
 # Create the RNNChain
 rnn = RNNChain()
@@ -24,16 +33,7 @@ costs = []
 
 for e in range(epochs):
     cost = 0
-    for name in cannabis_names:
-        # Replace syphons with spaces
-        name = name.replace('-', ' ').lower()
-
-        # Add the end token to the name
-        name = name + '>'
-
-        # Convert to one-hot vector
-        name_oh = one_hot_string(name)
-
+    for name_oh in names_oh:
         # Apply forward-propagation
         cost += rnn(name_oh)
 
@@ -41,7 +41,7 @@ for e in range(epochs):
         rnn.backpropagate()
         rnn.update_weights(0.002, 5)
 
-    cost /= len(cannabis_names)
+    cost /= len(names_oh)
 
     print('Epoch {}: J = {}'.format(e, cost))
     costs.append(cost)

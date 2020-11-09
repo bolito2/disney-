@@ -25,7 +25,7 @@ class RNNCell:
     def gradients(self, x, a, da):
         # dJ/dz, computed with element-wise multiplication. It would actually be a diagonal matrix with
         # m_ii = (1 + ai)(1 - ai) times da(row vector), which is equivalent but less efficient.
-        dz = np.multiply(np.multiply(1 + a, 1 - a).T, da)   # (1 x n)
+        dz = np.multiply(1 - np.square(a).T, da)   # (1 x n)
 
         # dz/db = I so they are equal, but we transpose it to make a column vector(for gradient descent)
         db = dz.T   # (n x 1)
@@ -121,9 +121,9 @@ class RNNChain:
 
                 # Here is where we backpropagate through time, getting the gradient of dJ with respect to the previous
                 # layer hidden values and updating the weights gradients each step
-                for j in range(t, 0, -1):
+                for j in range(t, t-1, -1):
                     # Compute the gradients of each time-step keeping in mind that a and x must be column vectors
-                    da, dWx_j, dWa_j, db_j = self.rnn_cell.gradients(np.reshape(self.cache.X[j], [-1, 1]), np.reshape(self.cache.A[j], [-1, 1]), da)
+                    da, dWx_j, dWa_j, db_j = self.rnn_cell.gradients(np.reshape(self.cache.X[j - 1], [-1, 1]), np.reshape(self.cache.A[j], [-1, 1]), da)
 
                     self.grads.dWx += dWx_j
                     self.grads.dWa += dWa_j
