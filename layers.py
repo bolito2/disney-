@@ -130,7 +130,18 @@ class RNNChain:
                     self.grads.db += db_j
 
     # Update the weights with the given gradients
-    def update_weights(self, learning_rate):
+    def update_weights(self, learning_rate, clipnorm):
+        # Don't let the gradients' norm exceed clipnorm
+        if np.linalg.norm(self.grads.dWx) > clipnorm:
+            self.grads.dWx *= clipnorm/np.linalg.norm(self.grads.dWx)
+
+        if np.linalg.norm(self.grads.dWa) > clipnorm:
+            self.grads.dWa *= clipnorm/np.linalg.norm(self.grads.dWa)
+
+        if np.linalg.norm(self.grads.db) > clipnorm:
+            self.grads.db *= clipnorm/np.linalg.norm(self.grads.db)
+
+        # Update the weights with the gradients
         self.rnn_cell.Wx -= learning_rate*self.grads.dWx
         self.rnn_cell.Wa -= learning_rate*self.grads.dWa
         self.rnn_cell.b -= learning_rate*self.grads.db

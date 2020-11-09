@@ -39,10 +39,12 @@ for e in range(epochs):
 
         # Backpropagate and update weights of the RNN
         rnn.backpropagate()
-        rnn.update_weights(0.005)
+        rnn.update_weights(0.003, 2)
+
+    cost /= len(cannabis_names)
 
     print('Epoch {}: J = {}'.format(e, cost))
-    costs.append(cost/len(cannabis_names))
+    costs.append(cost)
 
 plt.plot(costs)
 
