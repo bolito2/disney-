@@ -9,8 +9,8 @@ class RNNCell:
 
         # Set the weights, for both the last layer activations and this layers inputs
         # They have to be randomly-initialized, unlike the bias vector
-        self.Wx = np.random.random((n_letters, n_letters))
-        self.Wa = np.random.random((n_letters, n_letters))
+        self.Wx = np.random.random((n_letters, n_letters))*np.sqrt(2/n_letters)
+        self.Wa = np.random.random((n_letters, n_letters))*np.sqrt(2/n_letters)
 
     # Forward propagate one step
     def __call__(self, x, a_prev):
