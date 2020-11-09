@@ -18,7 +18,7 @@ with open('cannabis.csv', newline='') as csvfile:
 
 # Create the RNNChain
 rnn = RNNChain()
-epochs = 5
+epochs = 50
 
 costs = []
 
@@ -39,7 +39,7 @@ for e in range(epochs):
 
         # Backpropagate and update weights of the RNN
         rnn.backpropagate()
-        rnn.update_weights(0.003, 2)
+        rnn.update_weights(0.002, 5)
 
     cost /= len(cannabis_names)
 
