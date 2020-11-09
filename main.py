@@ -2,7 +2,7 @@ import csv
 import numpy as np
 from layers import *
 from encoding import *
-
+import matplotlib.pyplot as plt
 
 # Extract the strain names from the dataset
 with open('cannabis.csv', newline='') as csvfile:
@@ -16,19 +16,35 @@ with open('cannabis.csv', newline='') as csvfile:
     # First row is metadata so delete it
     cannabis_names = cannabis_names[1:]
 
-# Encode names into a numpy array(as one hot matrices)
-X = []
+# Create the RNNChain
+rnn = RNNChain()
+epochs = 5
 
-for name in cannabis_names:
-    # Replace syphons with spaces
-    name = name.replace('-', ' ').lower()
+costs = []
 
-    # Add the end token to the name
-    name = name + '>'
+for e in range(epochs):
+    cost = 0
+    for name in cannabis_names:
+        # Replace syphons with spaces
+        name = name.replace('-', ' ').lower()
 
-    # Convert to one-hot vector
-    name_oh = one_hot_string(name)
-    X.append(name_oh)
+        # Add the end token to the name
+        name = name + '>'
+
+        # Convert to one-hot vector
+        name_oh = one_hot_string(name)
+
+        # Apply forward-propagation
+        cost += rnn(name_oh)
+
+        # Backpropagate and update weights of the RNN
+        rnn.backpropagate()
+        rnn.update_weights(0.005)
+
+    print('Epoch {}: J = {}'.format(e, cost))
+    costs.append(cost/len(cannabis_names))
+
+plt.plot(costs)
 
 letter = 'o'
 gen_strain = ''
