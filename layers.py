@@ -1,6 +1,6 @@
 import numpy as np
 from encoding import *
-
+import h5py
 
 class RNNCell:
     def __init__(self, units):
@@ -197,3 +197,23 @@ class RNN:
 
         self.rnn_cell.ba -= learning_rate * self.grads.dba
         self.rnn_cell.by -= learning_rate * self.grads.dby
+
+    # Save the parameters in the file that you choose
+    def save_parameters(self, filename):
+        with h5py.File(filename, 'w') as f:
+            f.create_dataset('Wa', data=self.rnn_cell.Wa)
+            f.create_dataset('Wx', data=self.rnn_cell.Wx)
+            f.create_dataset('Wy', data=self.rnn_cell.Wy)
+
+            f.create_dataset('ba', data=self.rnn_cell.ba)
+            f.create_dataset('by', data=self.rnn_cell.by)
+
+    # And load them
+    def load_parameters(self, filename):
+        with h5py.File(filename, 'r') as f:
+            self.rnn_cell.Wa = f['Wa']
+            self.rnn_cell.Wx = f['Wx']
+            self.rnn_cell.Wy = f['Wy']
+
+            self.rnn_cell.ba = f['ba']
+            self.rnn_cell.by = f['by']
