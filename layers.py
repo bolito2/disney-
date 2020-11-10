@@ -197,7 +197,7 @@ class RNN:
 
             # Here is where we backpropagate through time, getting the gradient of dJ with respect to the previous
             # layer hidden values and updating the weights gradients each step
-            for j in range(t, max(0, t-3), -1):
+            for j in range(t, 0, -1):
                 # Compute the hidden weights' gradients of each time-step keeping in mind that a and x must be columns
                 da, dWx_j, dWa_j, dba_j = self.rnn_cell.hidden_gradients(np.reshape(self.cache.X[j - 1], [-1, 1]), np.reshape(self.cache.A[j - 1], [-1, 1]), np.reshape(self.cache.A[j], [-1, 1]), da)
 
