@@ -78,7 +78,7 @@ def gen_names(filename):
             return
 
         if letter == '':
-            letter = letters[random.randint(0, n_letters)]
+            letter = letters[random.randint(11, 36)]
         gen_strain = ''
 
         rnn_cell = rnn.rnn_cell
