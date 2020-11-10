@@ -66,13 +66,13 @@ def train(learning_rate, units, epochs):
 # Generate a name with the trained RNN
 def gen_names(filename):
 
-    print('Input \\ to exit')
+    print('Input how the name should start(leave blank if you want it completely random) and type \\ to exit')
 
     # Load the RNN from file
     rnn = RNN(filename=filename)
 
     while True:
-        letter = input('Input first letter(leave blank for random letter): ')
+        letter = input()
 
         if letter == '\\':
             return
