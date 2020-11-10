@@ -169,8 +169,8 @@ class RNN:
             da, dWy, dby = self.rnn_cell.output_gradients(np.reshape(self.cache.A[t], [-1, 1]), dy)
 
             # Update output gradients
-            self.grads.dWy = dWy
-            self.grads.dby = dby
+            self.grads.dWy += dWy
+            self.grads.dby += dby
 
             # Here is where we backpropagate through time, getting the gradient of dJ with respect to the previous
             # layer hidden values and updating the weights gradients each step
@@ -196,10 +196,4 @@ class RNN:
         self.rnn_cell.Wy -= learning_rate*self.grads.dWy
 
         self.rnn_cell.ba -= learning_rate * self.grads.dba
-        norm = np.linalg.norm(self.grads.dby)
-
-        if norm > 0.2:
-            self.grads.dby *= 0.2/norm
         self.rnn_cell.by -= learning_rate * self.grads.dby
-
-        return np.linalg.norm(self.grads.dby)
