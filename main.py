@@ -5,7 +5,7 @@ from encoding import *
 import matplotlib.pyplot as plt
 
 # Extract the strain names from the dataset
-with open('cannabis.csv', newline='') as csvfile:
+with open('cannabis.csv', newline='', encoding="utf-8") as csvfile:
     cannabis_data = csv.reader(csvfile)
     names_oh = []
 
@@ -24,17 +24,12 @@ with open('cannabis.csv', newline='') as csvfile:
     names_oh = names_oh[1:]
 
 
-# Create the RNNChain
-rnn = RNNChain()
+# Create the RNN
+rnn = RNN(4)
 epochs = 50
 
+# Keep track of the average cost in each epoch
 costs = []
-
-# Variables for plotting gradient norms
-plot = -1
-norms_Wx = []
-norms_Wa = []
-norms_b = []
 
 for e in range(epochs):
     cost = 0
@@ -44,13 +39,7 @@ for e in range(epochs):
 
         # Backpropagate and update weights of the RNN
         rnn.backpropagate()
-        norm_Wx, norm_Wa, norm_b = rnn.update_weights(0.01, 4, 20)
-
-        # If we are in the desired epoch, save gradient norms
-        if e == plot:
-            norms_Wx.append(norm_Wx)
-            norms_Wa.append(norm_Wa)
-            norms_b.append(norm_b)
+        rnn.update_weights(0.00002)
 
     cost /= len(names_oh)
 
@@ -60,11 +49,6 @@ for e in range(epochs):
 # Plot the cost in each epoch
 plt.plot(costs)
 plt.show()
-
-# Plot gradients' norms
-plt.plot(norms_Wx)
-plt.plot(norms_Wa)
-plt.plot(norms_b)
 
 
 # Generate a name with the trained RNN
