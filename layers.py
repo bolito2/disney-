@@ -108,12 +108,35 @@ class RNN:
             self.dWa = np.zeros((units, units))
             self.dWy = np.zeros((n_letters, units))
 
-    def __init__(self, units):
-        self.units = units
-        self.rnn_cell = RNNCell(units)
-        self.cache = None
-        self.long = None
-        self.grads = None
+    def __init__(self, units=None, filename=None):
+        if filename is None:
+            if units is None:
+                raise ValueError('You have to specify the number of units of the RNN if it isn\'t loaded from a file.')
+
+            self.units = units
+            self.rnn_cell = RNNCell(units)
+            self.cache = None
+            self.long = None
+            self.grads = None
+        else:
+            try:
+                with h5py.File(filename, 'r') as f:
+                    # Had to save units as a 1-dimensional array of size 1 lmao
+                    self.units = f['units'][0]
+
+                    self.rnn_cell = RNNCell(self.units)
+                    self.cache = None
+                    self.long = None
+                    self.grads = None
+
+                    self.rnn_cell.Wa = np.array(f['Wa'])
+                    self.rnn_cell.Wx = np.array(f['Wx'])
+                    self.rnn_cell.Wy = np.array(f['Wy'])
+
+                    self.rnn_cell.ba = np.array(f['ba'])
+                    self.rnn_cell.by = np.array(f['by'])
+            except OSError:
+                raise FileNotFoundError('Can\'t find the parameters. Download them or train the network.')
 
     # Forward-propagate a given name and cache the internal state of the RNN
     def __call__(self, X):
@@ -183,12 +206,6 @@ class RNN:
                 self.grads.dWa += dWa_j
                 self.grads.dba += dba_j
 
-
-    # Perform gradient clipping in a vector/matrix
-    @staticmethod
-    def clip(x):
-        norm = np.linalg.norm(x)
-
     # Update the weights with the gradients
     def update_weights(self, learning_rate, clipnorms=None):
         self.rnn_cell.Wx -= learning_rate*self.grads.dWx
@@ -208,12 +225,14 @@ class RNN:
             f.create_dataset('ba', data=self.rnn_cell.ba)
             f.create_dataset('by', data=self.rnn_cell.by)
 
+            f.create_dataset('units', data=np.array([self.units]))
+
     # And load them
     def load_parameters(self, filename):
         with h5py.File(filename, 'r') as f:
-            self.rnn_cell.Wa = f['Wa']
-            self.rnn_cell.Wx = f['Wx']
-            self.rnn_cell.Wy = f['Wy']
+            self.rnn_cell.Wa = np.array(f['Wa'])
+            self.rnn_cell.Wx = np.array(f['Wx'])
+            self.rnn_cell.Wy = np.array(f['Wy'])
 
-            self.rnn_cell.ba = f['ba']
-            self.rnn_cell.by = f['by']
+            self.rnn_cell.ba = np.array(f['ba'])
+            self.rnn_cell.by = np.array(f['by'])
