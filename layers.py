@@ -1,6 +1,6 @@
-import numpy as np
 from encoding import *
 import h5py
+
 
 class RNNCell:
     def __init__(self, units):

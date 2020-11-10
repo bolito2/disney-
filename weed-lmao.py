@@ -1,9 +1,9 @@
-import csv
-import numpy as np
 from layers import *
 from encoding import *
+
 import matplotlib.pyplot as plt
 
+import csv
 import sys
 import getopt
 
