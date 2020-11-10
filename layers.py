@@ -109,7 +109,23 @@ class RNN:
             self.dWy = np.zeros((n_letters, units))
 
     def __init__(self, units=None, filename=None):
-        if filename is None:
+        try:
+            with h5py.File(filename, 'r') as f:
+                # Had to save units as a 1-dimensional array of size 1 lmao
+                self.units = f['units'][0]
+
+                self.rnn_cell = RNNCell(self.units)
+                self.cache = None
+                self.long = None
+                self.grads = None
+
+                self.rnn_cell.Wa = np.array(f['Wa'])
+                self.rnn_cell.Wx = np.array(f['Wx'])
+                self.rnn_cell.Wy = np.array(f['Wy'])
+
+                self.rnn_cell.ba = np.array(f['ba'])
+                self.rnn_cell.by = np.array(f['by'])
+        except OSError:
             if units is None:
                 raise ValueError('You have to specify the number of units of the RNN if it isn\'t loaded from a file.')
 
@@ -118,25 +134,6 @@ class RNN:
             self.cache = None
             self.long = None
             self.grads = None
-        else:
-            try:
-                with h5py.File(filename, 'r') as f:
-                    # Had to save units as a 1-dimensional array of size 1 lmao
-                    self.units = f['units'][0]
-
-                    self.rnn_cell = RNNCell(self.units)
-                    self.cache = None
-                    self.long = None
-                    self.grads = None
-
-                    self.rnn_cell.Wa = np.array(f['Wa'])
-                    self.rnn_cell.Wx = np.array(f['Wx'])
-                    self.rnn_cell.Wy = np.array(f['Wy'])
-
-                    self.rnn_cell.ba = np.array(f['ba'])
-                    self.rnn_cell.by = np.array(f['by'])
-            except OSError:
-                raise FileNotFoundError('Can\'t find the parameters. Download them or train the network.')
 
     # Forward-propagate a given name and cache the internal state of the RNN
     def __call__(self, X):
