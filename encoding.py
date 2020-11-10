@@ -18,3 +18,13 @@ def one_hot_string(string):
         string_oh[i] = one_hot_character(string[i]).squeeze()
 
     return string_oh
+
+
+# Decode a string from one-hot representation
+def decode_one_hot(oh):
+    word = ''
+    for i in range(oh.shape[0]):
+        indices = np.where(oh[i] == 1)
+        word += letters[indices[0][0]]
+
+    return word

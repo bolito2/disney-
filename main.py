@@ -26,29 +26,34 @@ with open('cannabis.csv', newline='', encoding="utf-8") as csvfile:
 
 # Create the RNN
 rnn = RNN(4)
-epochs = 50
+epochs = 50_00
 
 # Keep track of the average cost in each epoch
 costs = []
+grads=[]
 
 for e in range(epochs):
     cost = 0
-    for name_oh in names_oh:
+    for name_oh in names_oh[27:28]:
         # Apply forward-propagation
-        cost += rnn(name_oh)
+        costs.append(rnn(name_oh))
 
         # Backpropagate and update weights of the RNN
         rnn.backpropagate()
-        rnn.update_weights(0.00002)
+        grads.append(rnn.update_weights(2))
 
     cost /= len(names_oh)
 
-    print('Epoch {}: J = {}'.format(e, cost))
-    costs.append(cost)
+    #print('Epoch {}: J = {}'.format(e, cost))
+    #costs.append(cost)
+
 
 # Plot the cost in each epoch
-plt.plot(costs)
-plt.show()
+plt.subplot(1, 2, 1)
+plt.plot(costs, color='r')
+
+plt.subplot(1, 2, 2)
+plt.plot(grads)
 
 
 # Generate a name with the trained RNN
@@ -58,16 +63,16 @@ def gen_name():
 
     rnn_cell = rnn.rnn_cell
 
-    a = np.zeros((n_letters, 1))
+    a = np.zeros((4, 1))
     while letter != '>':
         # Add last letter to the name of the strain
         gen_strain += letter
 
         # Forward-propagate one step
-        a = rnn_cell(a, one_hot_character(letter))
+        a, y = rnn_cell(one_hot_character(letter), a)
 
         # Get the probabilities of choosing each character
-        probabilities = np.reshape(softmax(a), [-1])
+        probabilities = np.reshape(softmax(y), [-1])
 
         letter_index = np.random.choice(n_letters, p=probabilities)
         letter = letters[letter_index]

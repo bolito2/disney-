@@ -163,7 +163,7 @@ class RNN:
         # Iterate through layers 1 to long(included)
         for t in range(1, self.long + 1):
             # Compute dJ/dy where J is the cost of the time-step t and y its output -> (n x 1)
-            dy = np.reshape(self.cache.P[t] - self.cache.X[t], [1, -1])
+            dy = np.reshape(self.cache.P[t] - self.cache.X[t], [1, -1])/self.long
 
             # Compute the output weights' gradients and the gradient of the hidden state to get the rest
             da, dWy, dby = self.rnn_cell.output_gradients(np.reshape(self.cache.A[t], [-1, 1]), dy)
@@ -183,11 +183,23 @@ class RNN:
                 self.grads.dWa += dWa_j
                 self.grads.dba += dba_j
 
-    # Update the weights with the gradients
-    def update_weights(self, learning_rate):
-        #self.rnn_cell.Wx -= learning_rate*self.grads.dWx
-        #self.rnn_cell.Wa -= learning_rate*self.grads.dWa
-        #self.rnn_cell.Wy -= learning_rate*self.grads.dWy
 
-        #self.rnn_cell.ba -= learning_rate * self.grads.dba
+    # Perform gradient clipping in a vector/matrix
+    @staticmethod
+    def clip(x):
+        norm = np.linalg.norm(x)
+
+    # Update the weights with the gradients
+    def update_weights(self, learning_rate, clipnorms=None):
+        self.rnn_cell.Wx -= learning_rate*self.grads.dWx
+        self.rnn_cell.Wa -= learning_rate*self.grads.dWa
+        self.rnn_cell.Wy -= learning_rate*self.grads.dWy
+
+        self.rnn_cell.ba -= learning_rate * self.grads.dba
+        norm = np.linalg.norm(self.grads.dby)
+
+        if norm > 0.2:
+            self.grads.dby *= 0.2/norm
         self.rnn_cell.by -= learning_rate * self.grads.dby
+
+        return np.linalg.norm(self.grads.dby)
