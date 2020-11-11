@@ -126,9 +126,9 @@ class RNN:
                 self.rnn_cell.ba = np.array(f['ba'])
                 self.rnn_cell.by = np.array(f['by'])
 
-                print('*********************************************')
+                print('==============================================')
                 print('Loaded RNN of {} units from {}'.format(self.units, filename))
-                print('*********************************************')
+                print('==============================================')
         except OSError:
             if units is None:
                 raise ValueError('You have to specify the number of units of the RNN if it isn\'t loaded from a file.')
@@ -139,9 +139,9 @@ class RNN:
             self.long = None
             self.grads = None
 
-            print('*********************************************')
+            print('==============================================')
             print('Created RNN of {} units'.format(self.units))
-            print('*********************************************')
+            print('==============================================')
 
     # Forward-propagate a given name and cache the internal state of the RNN
     def __call__(self, X):
