@@ -232,12 +232,4 @@ class RNN:
 
             f.create_dataset('units', data=np.array([self.units]))
 
-    # And load them
-    def load_parameters(self, filename):
-        with h5py.File(filename, 'r') as f:
-            self.rnn_cell.Wa = np.array(f['Wa'])
-            self.rnn_cell.Wx = np.array(f['Wx'])
-            self.rnn_cell.Wy = np.array(f['Wy'])
 
-            self.rnn_cell.ba = np.array(f['ba'])
-            self.rnn_cell.by = np.array(f['by'])
