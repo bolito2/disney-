@@ -49,8 +49,8 @@ def train(learning_rate, units, epochs):
     # Keep track of the average cost in each epoch
     costs = []
 
+    print('==============================================')
     print('Training for {} epochs with learning_rate={}'.format(epochs, learning_rate))
-    print('=============================================')
     for e in range(epochs):
         cost = 0
         for name_oh in names_oh:
@@ -63,11 +63,11 @@ def train(learning_rate, units, epochs):
 
         cost /= len(names_oh)
 
-        print('Epoch {}: Cost = {}'.format(e + 1, cost))
+        print('(Epoch {}/{}) Cost = {}'.format(e + 1, epochs, cost), end='\r')
         costs.append(cost)
 
-    print('=============================================')
     print('Training finished, Cost: {} -> {}'.format(costs[0], costs[-1]))
+    print('==============================================')
 
     # Save the updated parameters
     rnn.save_parameters(filename)
@@ -86,10 +86,10 @@ def train(learning_rate, units, epochs):
 
 # Generate a name with the trained RNN
 def gen_names():
-    print('Input how the name should start. Leave blank if you want it completely random and type \\ to exit')
-
     # Load the RNN from file
     rnn = RNN(filename=filename)
+
+    print('Input how the name should start. Leave blank if you want it completely random and type \\ to exit')
 
     while True:
         # Get the user's chosen start for the strain name, and lowercase it
