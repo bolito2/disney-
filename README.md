@@ -1,5 +1,5 @@
 # WEED LMAO
-### RNN trained to generate weed strain names
+### Recurrent neural network trained to generate weed strain names
 
 ![LMAO](https://i.imgur.com/FqUL9PS.png)
 
@@ -59,9 +59,11 @@ Then there's the parameters, **Wx**, **Wa**, **Wy** and the biases **ba**, **by*
 #### Forward propagation
 In each time-step(left to right) we start with the letter of the word corresponding to that time-step(**x**) and encode in a one hot way. Basically we use an array containing all the letters supported by the algorithm, in this case ' abcdefghijklmnopqrstuvwxyz>' that is, the letters a-z, spaces and >, a special character I will explain shortly. Then, create a vector where all its entries are zeros except the one in the index of the letter in the previous array(That's why it's called *one-hot* encoding).
 
-Then we have the hidden state of the RNN(**a**) which is what keeps track of the previous letters to find patterns, so *units* can be seen as the size of the RNNs "memory". This is combined with the input using the weights **Wx** and **Wa** to get the next hidden state, which get passed directly to the next time-step and is also used to compute the intermediate output **y**. I used the hyperbolic tangent as activation function. Then that goes through a softmax layer so all its entries are positive and sum to one(they will be used as probabilities in generation) and this prediction is compared to what the next letter really is to get the cost. That continues until the last time-step, where the RNN should guess that the next letter is >, that means that the name has ended.
+Then we have the hidden state of the RNN(**a**) which is what keeps track of the previous letters to find patterns, so *units* can be seen as the size of the RNNs "memory". This is combined with the input using the weights **Wx** and **Wa** to get the next hidden state, which get passed directly to the next time-step and is also used to compute the intermediate output **y**. I used the hyperbolic tangent as activation function.
 
-We then sum the costs of each time-step and get a value for how far-off the predictions were, using the cross-entropy loss formula.
+Then that goes through a softmax layer so all its entries are positive and sum to one(they will be used as probabilities in generation) and this prediction is compared to what the next letter really is to get the cost. That continues until the last time-step, which is always trying to predict the end token, >. The reason for using this token(that gets added when loading the database) will be explained in the **Generating names** section.
+
+Then we sum the costs computed at each time-step with the cross-entropy formula and get a value for how far-off the predictions were.
 
 #### Back-propagation through time
 Then apply backpropagation through time(not going explain that here lol) to get the gradient of the cost with respect to each parameter(**Wx**, **Wa**, **Wy** and the biases **ba**, **by** not in the picture) and use gradient descent to hopefully get better predictions next time. 
