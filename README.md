@@ -8,7 +8,7 @@ Hey bro you got any of that Purice Kush, maybe some Masite Sipberry or Zonin Soo
 ## I mean, why?
 I've wanted to code a neural network from scratch to practice machine learning for a while, and because NLP is one of the coolest fields right now I decided to make a name generator. I know that given that it's a simple model(plain RNN) it will produce mostly gibberish so what better dataset to train it that with weed strain names 👌😂 
 
-Thanks to [LiamLarsen](https://www.kaggle.com/kingburrito666/followers) for offering the dataset over at [Kaggle](https://www.kaggle.com/kingburrito666/cannabis-strains)
+Thanks to [LiamLarsen](https://www.kaggle.com/kingburrito666) for offering the dataset over at [Kaggle](https://www.kaggle.com/kingburrito666/cannabis-strains)
 
 ## How to use it
 ### Installing
@@ -25,7 +25,7 @@ If you want to get straight to the action, the repository contains the pre-train
 ```bash
 python weed_lmao.py generate
 ```
-It will open a prompt for you to write how the name should start. If you leave it blank it will start with a random letter. When you want to exit, enter a backslash(\)
+It will open a prompt for you to write how the name should start. If you leave it blank it will start with a random letter. When you want to exit, enter a backslash( \\ )
 
 Most of the outputs aren't very interesting, but sometimes you get names that seem what GPT-3 or other reputable algorithm would output if it had consumed the strain that it was trying to name, so pretty good results overall for what i was expecting.
 
