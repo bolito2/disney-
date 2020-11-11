@@ -41,7 +41,7 @@ You can choose these options:
 
 The default command above is equivalent to
 ```bash
-python weed_lmao.py train -u 10 -r 0.05 -e 50
+python weed_lmao.py train -u 32 -r 0.07 -e 100
 ```
 
 I haven't really put much thought in the defaults, if you make some tries you will probably come with a better combination
