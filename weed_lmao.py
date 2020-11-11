@@ -114,9 +114,9 @@ def gen_names():
 
 def train_args(arg_list):
     opts, arga = getopt.getopt(arg_list, 'r:u:e:')
-    learning_rate = 0.05
-    units = 10
-    epochs = 50
+    learning_rate = 0.07
+    units = 32
+    epochs = 100
 
     for opt, value in opts:
         if opt == '-r':
