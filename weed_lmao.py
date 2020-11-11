@@ -49,6 +49,8 @@ def train(learning_rate, units, epochs):
     # Keep track of the average cost in each epoch
     costs = []
 
+    print('Training for {} epochs with learning_rate={}'.format(epochs, learning_rate))
+    print('=============================================')
     for e in range(epochs):
         cost = 0
         for name_oh in names_oh:
@@ -61,14 +63,24 @@ def train(learning_rate, units, epochs):
 
         cost /= len(names_oh)
 
-        print('Epoch {}: J = {}'.format(e + 1, cost))
+        print('Epoch {}: Cost = {}'.format(e + 1, cost))
         costs.append(cost)
+
+    print('=============================================')
+    print('Training finished, Cost: {} -> {}'.format(costs[0], costs[-1]))
 
     # Save the updated parameters
     rnn.save_parameters(filename)
 
     # Plot the cost in each epoch
     plt.plot(costs, color='r')
+
+    # Change the name of the window
+    fig = plt.gcf()
+    fig.canvas.set_window_title('WEED LMAO')
+
+    plt.ylabel('Cost')
+    plt.xlabel('Epoch')
     plt.show()
 
 
