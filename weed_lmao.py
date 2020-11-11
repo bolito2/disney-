@@ -86,39 +86,30 @@ def train(learning_rate, units, epochs):
 
 # Generate a name with the trained RNN
 def gen_names():
-
-    print('Input how the name should start(leave blank if you want it completely random) and type \\ to exit')
+    print('Input how the name should start. Leave blank if you want it completely random and type \\ to exit')
 
     # Load the RNN from file
     rnn = RNN(filename=filename)
 
     while True:
-        letter = input()
+        # Get the user's chosen start for the strain name, and lowercase it
+        start = input().lower()
 
-        if letter == '\\':
+        if start == '\\':
             return
 
-        if letter == '':
-            letter = letters[random.randint(11, 36)]
-        gen_strain = ''
+        # Start with random letter if no input is given
+        if start == '':
+            # Only pick a letter, don't start with space or end-token
+            start = letters[random.randint(1, n_letters - 2)]
 
-        rnn_cell = rnn.rnn_cell
+        # Generate the string if the input is valid
+        valid, gen_strain = rnn.gen_name(start)
 
-        a = np.zeros((rnn.units, 1))
-        while letter != '>':
-            # Add last letter to the name of the strain
-            gen_strain += letter
-
-            # Forward-propagate one step
-            a, y = rnn_cell(one_hot_character(letter), a)
-
-            # Get the probabilities of choosing each character
-            probabilities = np.reshape(softmax(y), [-1])
-
-            letter_index = np.random.choice(n_letters, p=probabilities)
-            letter = letters[letter_index]
-
-        print(gen_strain)
+        if valid:
+            print(gen_strain)
+        else:
+            print('Input contains invalid characters. Only use letters a-z and spaces.')
 
 
 def train_args(arg_list):
