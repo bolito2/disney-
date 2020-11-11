@@ -22,7 +22,9 @@ def train(learning_rate, units, epochs):
     with open('cannabis.csv', newline='', encoding="utf-8") as csvfile:
         cannabis_data = csv.reader(csvfile)
         names_oh = []
+        excluded_names = 0
 
+        print('Loading weed strain names from database...')
         # The first column of the data contains the strain name
         for row in cannabis_data:
             # Replace syphons with spaces
@@ -32,10 +34,17 @@ def train(learning_rate, units, epochs):
             name = name + '>'
 
             # Convert to one-hot vector and append to the array
-            names_oh.append(one_hot_string(name))
+            valid, name_oh = one_hot_string(name)
+            # Only append the name if it's valid(no numbers in it)
+            if valid:
+                names_oh.append(name_oh)
+            else:
+                excluded_names += 1
 
         # First row is metadata so delete it
         names_oh = names_oh[1:]
+
+        print('{} names were excluded because they contained numbers or other invalid characters. {} names remain.'.format(excluded_names, len(names_oh)))
 
     # Keep track of the average cost in each epoch
     costs = []

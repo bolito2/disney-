@@ -1,7 +1,7 @@
 import numpy as np
 
 # Letters supported by the algorithm
-letters = ' 0123456789abcdefghijklmnopqrstuvwxyz>'
+letters = ' abcdefghijklmnopqrstuvwxyz>'
 n_letters = len(letters)
 
 
@@ -12,12 +12,15 @@ def one_hot_character(character):
 
 
 # Return the one hot encoding of a string as a matrix (len x n_letters)
+# If it has any invalid characters(numbers return that it is invalid)
 def one_hot_string(string):
     string_oh = np.zeros((len(string), n_letters))
     for i in range(len(string)):
+        if string[i] not in letters:
+            return False, None
         string_oh[i] = one_hot_character(string[i]).squeeze()
 
-    return string_oh
+    return True, string_oh
 
 
 # Decode a string from one-hot representation
