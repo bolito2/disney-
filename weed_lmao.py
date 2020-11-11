@@ -64,7 +64,7 @@ def train(learning_rate, units, epochs):
 
 
 # Generate a name with the trained RNN
-def gen_names(filename):
+def gen_names():
 
     print('Input how the name should start(leave blank if you want it completely random) and type \\ to exit')
 
@@ -83,7 +83,7 @@ def gen_names(filename):
 
         rnn_cell = rnn.rnn_cell
 
-        a = np.zeros((10, 1))
+        a = np.zeros((rnn.units, 1))
         while letter != '>':
             # Add last letter to the name of the strain
             gen_strain += letter
@@ -121,6 +121,6 @@ if __name__ == '__main__':
     if sys.argv[1] == 'train':
         train_args(sys.argv[2:])
     if sys.argv[1] == 'generate':
-        gen_names(filename)
+        gen_names()
 
 
