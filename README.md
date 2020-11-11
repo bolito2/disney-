@@ -3,7 +3,7 @@
 
 ![LMAO](https://i.imgur.com/FqUL9PS.png)
 
-Hey bro you got any of that Purice Kush, maybe some Hewory or Mogeshank? Not even Unteshite? I will have to settle with the good old Kincan Dream
+Hey bro you got any of that Purice Kush, maybe some Hewory or Mogeshank? Not even Unteshite? I will have to settle with the good old Kincan Dream. OD Kush may be too much 😳😳
 ## I mean, why?
 I've wanted to code a neural network from scratch to practice machine learning for a while, and because NLP is one of the coolest fields right now I decided to make a name generator. I know that given that it's a simple model(plain RNN) it will produce mostly gibberish so what better dataset to train it that with weed strain names 👌😂 
 
