@@ -110,7 +110,6 @@ class RNN:
 
     def __init__(self, units=None, filename=None):
         try:
-            print(filename)
             npz = np.load(filename)
 
             # Had to save units as a 1-dimensional array of size 1 lmao
