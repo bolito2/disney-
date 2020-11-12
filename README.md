@@ -15,9 +15,9 @@ To make your own weed names just open bash/powershell, clone the repository and 
 ```bash
 git clone https://github.com/bolito2/weed-lmao
 cd weed-lmao
-pip install -r requirements.txt
+pip install numpy matplotlib
 ```
-They are only numpy for the linear algebra, matplotlib for plotting the cost and h5py for saving and loading the parameters. You may be asking; why didn't you use Tensorflow haha what a fucking tryhard. Well, I'm not a CIA n*****, I write my own neural networks. 
+They are only numpy for the linear algebra and matplotlib for plotting the cost. You may be asking; why didn't you use Tensorflow haha what a fucking tryhard. Well, I'm not a CIA n*****, I write my own neural networks. 
 
 ### Generating names
 If you want to get straight to the action, the repository contains the pre-trained parameters(yeah, I know) so just type

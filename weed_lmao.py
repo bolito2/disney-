@@ -10,7 +10,7 @@ import getopt
 import random
 
 # Path to save the parameters
-filename = 'parameters.h5'
+filename = 'parameters.npz'
 
 
 # Train the RNN with the given parameters
