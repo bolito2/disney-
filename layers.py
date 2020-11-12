@@ -1,5 +1,4 @@
 from encoding import *
-import h5py
 
 
 class RNNCell:
