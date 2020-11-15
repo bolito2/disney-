@@ -29,7 +29,7 @@ It will open a prompt for you to write how the name should start. If you leave i
 Most of the outputs aren't very interesting, but sometimes you get names that seem what GPT-3 or other reputable algorithm would output if it had consumed the strain that it was trying to name, so pretty good results overall for what i was expecting.
 
 ### Custom training
-If you want you can also train the network at your taste. Keep in mind that I don't work at Google so this may take some time to train even though it is a pretty shitty model. To train it from scratch you have to delete the file parameters.h5, or else it will keep training over those parameters. The command is the following:
+If you want you can also train the network at your taste. Keep in mind that I don't work at Google so this may take some time to train even though it is a pretty shitty model. To train it from scratch you have to delete the file parameters.npz, or else it will keep training over those parameters. The command is the following:
 ```bash
 python weed_lmao.py train
 ```
@@ -53,7 +53,7 @@ At its core this project is a Recurrent Neural Network(RNN), which work pretty w
 
 The elements in the picture are **x**, the inputs, column vectors of length *n_letters*(the number of supported characters, explained below), **a**, the hidden states of length *units*, **y** the intermediate outputs of length *n_letters* and **p**, the final predictions(probability of next letter being that index) of length *n_letters* too.
 
-Then there's the parameters, **Wx**, **Wa**, **Wy** and the biases **ba**, **by** not in the picture, which are used to compute all those things. One important fact is that they are shared along all time-steps. It really is a single RNN cell feeding its outputs into itself over and over. This is what makes RNN light-weight and flexible for variable-length inputs like strings of letters.
+Then there's the parameters, **Wx**, **Wa**, **Wy** and the biases **ba**, **by** not in the picture, which are used to compute all those things. One important fact is that they are shared along all time-steps. It really is a single RNN cell feeding its outputs into itself over and over(which I like to do too 😉). This is what makes RNN light-weight and flexible for variable-length inputs like strings of letters.
 
 
 #### Forward propagation
