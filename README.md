@@ -46,7 +46,7 @@ I haven't really put much thought in the defaults, if you make some tries you wi
 ### Training
 At its core this project is a Recurrent Neural Network(RNN), which work pretty well for data that has a sequential component(like letters in a name) for its complexity. Here is a picture of the model I used, when trained with the name 'gravity':
 
-![Training](https://imgur.com/AH9s8yK)
+![Training](https://i.imgur.com/AH9s8yK.png)
 
 The elements in the picture are **x**, the inputs, column vectors of length *n_letters*(the number of supported characters, explained below), **a**, the hidden states of length *units*, **y** the intermediate outputs of length *n_letters* and **p**, the final predictions(probability of next letter being that index) of length *n_letters* too.
 
