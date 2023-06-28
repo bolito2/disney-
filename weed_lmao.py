@@ -19,16 +19,16 @@ def train(learning_rate, units, epochs):
     rnn = RNN(filename=filename, units=units)
 
     # Extract the strain names from the dataset
-    with open('cannabis.csv', newline='', encoding="utf-8") as csvfile:
-        cannabis_data = csv.reader(csvfile)
+    with open('hotstar.csv', newline='', encoding="utf-8") as csvfile:
+        movie_data = csv.reader(csvfile)
         names_oh = []
         excluded_names = 0
 
-        print('Loading weed strain names from database...')
-        # The first column of the data contains the strain name
-        for row in cannabis_data:
+        print('Loading film names from database...')
+        # The second column of the data contains the movie name
+        for row in movie_data:
             # Replace syphons with spaces
-            name = row[0].replace('-', ' ').lower()
+            name = row[1].replace('-', ' ').lower()
 
             # Add the end token to the name
             name = name + '>'
@@ -77,7 +77,7 @@ def train(learning_rate, units, epochs):
 
     # Change the name of the window
     fig = plt.gcf()
-    fig.canvas.set_window_title('WEED LMAO')
+    fig.canvas.set_window_title('Disney-')
 
     plt.ylabel('Cost')
     plt.xlabel('Epoch')
@@ -92,7 +92,7 @@ def gen_names():
     print('Input how the name should start. Leave blank if you want it completely random and type \\ to exit')
 
     while True:
-        # Get the user's chosen start for the strain name, and lowercase it
+        # Get the user's chosen start for the movie name, and lowercase it
         start = input().lower()
 
         if start == '\\':
